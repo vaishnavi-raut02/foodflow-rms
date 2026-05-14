@@ -1,10 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthPage from "../pages/auth/AuthPage";
+import Dashboard from "../pages/Dashboard";
+import ProtectedRoute from "./ProtectedRoute";
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<h1>Home</h1>} />
+
+        <Route path="/" element={<AuthPage />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );
