@@ -1,27 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthPage from "../pages/auth/AuthPage";
-import Dashboard from "../pages/Dashboard";
-import ProtectedRoute from "./ProtectedRoute";
 
-const AppRoutes = () => {
+import LandingPage from "../pages/LandingPage";
+import AuthPage from "../pages/auth/AuthPage";
+import RestaurantListPage from "../pages/RestaurantListPage";
+import RestaurantDetailPage from "../pages/RestaurantDetailPage";
+
+function App() {
   return (
     <BrowserRouter>
       <Routes>
-
-        <Route path="/" element={<AuthPage />} />
-
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/restaurants" element={<RestaurantListPage />} />
         <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
+  path="/restaurant/:id"
+  element={<RestaurantDetailPage />}
+/>
       </Routes>
     </BrowserRouter>
   );
-};
+}
 
-export default AppRoutes;
+export default App;

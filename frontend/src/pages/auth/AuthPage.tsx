@@ -1,135 +1,88 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/authStore";
+import { useState } from "react";
 
-const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-
+export default function AuthPage() {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+  const [role, setRole] = useState("customer");
 
-  const login = useAuthStore((state) => state.login);
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6 py-10 text-white overflow-hidden relative">
+      {/* BACKGROUND BLURS */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-orange-500/20 blur-3xl rounded-full" />
+      <div className="absolute bottom-0 right-0 w-72 h-72 bg-red-500/20 blur-3xl rounded-full" />
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    role: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
-  });
+      <div className="relative z-10 w-full max-w-7xl grid lg:grid-cols-2 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-[40px] overflow-hidden shadow-2xl">
 
-  const [errors, setErrors] = useState<string[]>([]);
+        {/* LEFT SIDE */}
+        <div className="hidden lg:flex flex-col justify-center p-16 bg-linear-to-br from-orange-500 to-red-600 relative overflow-hidden">
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+          <div className="absolute top-0 right-0 text-[250px] opacity-10">
+            🍔
+          </div>
 
-  const validateForm = () => {
-    const newErrors: string[] = [];
+          <div className="relative z-10">
+            <div className="inline-flex px-4 py-2 rounded-full bg-white/10 backdrop-blur-lg mb-8 text-sm font-medium">
+              🚀 Smart Restaurant Ecosystem
+            </div>
 
-    if (!formData.role) {
-      newErrors.push("Please select role");
-    }
+            <h1 className="text-6xl font-black leading-tight">
+              FoodFlow Platform
+            </h1>
 
-    if (!formData.email) {
-      newErrors.push("Email is required");
-    }
+            <p className="mt-6 text-xl text-white/90 leading-relaxed max-w-lg">
+              Manage restaurants, orders, inventory, analytics, and customer
+              experiences from one intelligent modern platform.
+            </p>
 
-    if (!formData.password) {
-      newErrors.push("Password is required");
-    }
+            <div className="mt-12 space-y-5">
 
-    if (!isLogin) {
-      if (!formData.fullName) {
-        newErrors.push("Full name is required");
-      }
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/10">
+                <h3 className="font-bold text-lg">
+                  🚚 Real-Time Order Tracking
+                </h3>
 
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.push("Passwords do not match");
-      }
-    }
+                <p className="text-white/80 mt-2 text-sm">
+                  Track customer orders and deliveries instantly.
+                </p>
+              </div>
 
-    setErrors(newErrors);
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/10">
+                <h3 className="font-bold text-lg">
+                  📊 Smart Analytics Dashboard
+                </h3>
 
-    return newErrors.length === 0;
-  };
+                <p className="text-white/80 mt-2 text-sm">
+                  Monitor sales, customers, and restaurant performance.
+                </p>
+              </div>
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-5 border border-white/10">
+                <h3 className="font-bold text-lg">
+                  🍳 Kitchen & Inventory Management
+                </h3>
 
-    if (!validateForm()) return;
+                <p className="text-white/80 mt-2 text-sm">
+                  Handle kitchen operations and stock management efficiently.
+                </p>
+              </div>
 
-    try {
-      if (isLogin) {
-        // Backend API integration later
-
-        login(
-          {
-            role: formData.role,
-            email: formData.email,
-          },
-          "dummy-jwt-token"
-        );
-
-        navigate("/dashboard");
-      } else {
-        alert("Registration successful");
-        setIsLogin(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-return (
-  <div className="min-h-screen bg-[#f4f6f8] flex items-center justify-center p-6">
-
-    <div className="w-full max-w-6xl bg-white rounded-[32px] overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-2">
-
-      {/* LEFT SECTION */}
-      <div className="bg-[#1d2b3f] text-white p-12 flex flex-col justify-center relative overflow-hidden">
-
-        {/* GLOW EFFECT */}
-        <div className="absolute w-72 h-72 bg-[#67f0b5]/20 rounded-full blur-3xl -top-10 -left-10" />
-
-        <div className="relative z-10">
-
-        
-
-          <h1 className="text-5xl font-bold leading-tight mb-6">
-            Restaurant Management System
-          </h1>
-
-         
-
-          {/* FEATURES */}
-          
-
+            </div>
+          </div>
         </div>
 
-      </div>
+        {/* RIGHT SIDE */}
+        <div className="p-8 lg:p-16 flex flex-col justify-center">
 
-      {/* RIGHT SECTION */}
-      <div className="bg-[#f7f8fa] flex items-center justify-center p-8 lg:p-14">
-
-        <div className="w-full max-w-md">
-
-          {/* TOGGLE */}
-          <div className="flex mb-8 bg-[#e9edf2] rounded-2xl p-1">
+          {/* SIGN IN / SIGN UP TOGGLE */}
+          <div className="flex bg-white/5 rounded-2xl p-1 mb-10 border border-white/10">
 
             <button
               onClick={() => setIsLogin(true)}
-              className={`w-1/2 py-3 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-3 rounded-xl transition-all duration-300 font-semibold ${
                 isLogin
-                  ? "bg-[#0f8b5f] text-white shadow-md"
-                  : "text-gray-500"
+                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                  : "text-gray-400"
               }`}
             >
               Sign In
@@ -137,10 +90,10 @@ return (
 
             <button
               onClick={() => setIsLogin(false)}
-              className={`w-1/2 py-3 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-3 rounded-xl transition-all duration-300 font-semibold ${
                 !isLogin
-                  ? "bg-[#0f8b5f] text-white shadow-md"
-                  : "text-gray-500"
+                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                  : "text-gray-400"
               }`}
             >
               Sign Up
@@ -148,194 +101,196 @@ return (
 
           </div>
 
-          {/* TITLE */}
-          <div className="mb-8">
+          {/* ROLE SELECTION */}
+          <div className="grid grid-cols-2 gap-4 mb-10">
 
-            <h2 className="text-4xl font-bold text-gray-800 mb-3">
-              {isLogin
-                ? "Welcome Back"
-                : "Create Account"}
-            </h2>
+            {/* CUSTOMER */}
+            <button
+              onClick={() => setRole("customer")}
+              className={`rounded-3xl p-6 border transition-all duration-300 text-left ${
+                role === "customer"
+                  ? "border-orange-500 bg-orange-500/10 scale-105 shadow-lg shadow-orange-500/10"
+                  : "border-white/10 bg-white/5 hover:bg-white/10"
+              }`}
+            >
+              <div className="text-4xl mb-4">🛒</div>
 
-           
+              <h3 className="text-xl font-bold">
+                Customer
+              </h3>
+
+              <p className="text-gray-400 mt-2 text-sm leading-relaxed">
+                Order food, track deliveries, and explore restaurants.
+              </p>
+            </button>
+
+            {/* RESTAURANT */}
+            <button
+              onClick={() => setRole("restaurant")}
+              className={`rounded-3xl p-6 border transition-all duration-300 text-left ${
+                role === "restaurant"
+                  ? "border-orange-500 bg-orange-500/10 scale-105 shadow-lg shadow-orange-500/10"
+                  : "border-white/10 bg-white/5 hover:bg-white/10"
+              }`}
+            >
+              <div className="text-4xl mb-4">🏪</div>
+
+              <h3 className="text-xl font-bold">
+                Restaurant Owner
+              </h3>
+
+              <p className="text-gray-400 mt-2 text-sm leading-relaxed">
+                Manage orders, kitchen, inventory, and analytics.
+              </p>
+            </button>
 
           </div>
 
-          {/* ERRORS */}
-          {errors.length > 0 && (
-            <div className="bg-red-50 border border-red-200 text-red-500 p-4 rounded-2xl mb-6">
+          {/* TITLE */}
+          <h2 className="text-4xl font-black mb-3 leading-tight">
 
-              <ul className="list-disc ml-5 text-sm space-y-1">
+            {isLogin
+              ? `Welcome Back ${
+                  role === "customer"
+                    ? "Customer"
+                    : "Partner"
+                } 👋`
+              : `Create ${
+                  role === "customer"
+                    ? "Customer"
+                    : "Restaurant"
+                } Account 🚀`}
 
-                {errors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
+          </h2>
 
-              </ul>
+          <p className="text-gray-400 mb-10 text-lg">
 
-            </div>
-          )}
+            {isLogin
+              ? "Sign in to continue your experience."
+              : "Join the smart restaurant ecosystem platform."}
+
+          </p>
 
           {/* FORM */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form  className="space-y-5"
+  onSubmit={(e) => {
+    e.preventDefault();
 
-            {/* FULL NAME */}
+    navigate("/restaurants");
+  }}
+>
+
+            {/* NAME FIELD */}
             {!isLogin && (
-              <div>
-
-                <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  Full Name
-                </label>
-
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Enter full name"
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#67f0b5]"
-                />
-
-              </div>
+              <input
+                type="text"
+                placeholder={
+                  role === "customer"
+                    ? "Full Name"
+                    : "Restaurant Name"
+                }
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+              />
             )}
 
-            {/* ROLE */}
-            <div>
+            {/* RESTAURANT EXTRA FIELDS */}
+            {/* ADDRESS */}
+{!isLogin && (
+  <input
+    type="text"
+    placeholder={
+      role === "customer"
+        ? "Residential Address"
+        : "Restaurant Address"
+    }
+    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+  />
+)}
 
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
-                Select Role
-              </label>
-
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#67f0b5]"
-              >
-                <option value="">Choose Role</option>
-                <option value="customer">Customer</option>
-                <option value="staff">Staff</option>
-                {isLogin && (
-                  <option value="admin">
-                    Admin
-                  </option>
-                )}
-              </select>
-
-            </div>
+{/* CONTACT NUMBER */}
+{!isLogin && (
+  <input
+    type="text"
+    placeholder={
+      role === "customer"
+        ? "Mobile Number"
+        : "Business Contact Number"
+    }
+    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+  />
+)}
 
             {/* EMAIL */}
-            <div>
-
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
-                Email
-              </label>
-
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#67f0b5]"
-              />
-
-            </div>
-
-            {/* PHONE */}
-            {!isLogin && (
-              <div>
-
-                <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  Phone Number
-                </label>
-
-                <input
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Enter phone number"
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#67f0b5]"
-                />
-
-              </div>
-            )}
+            <input
+              type="email"
+              placeholder="Email Address"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+            />
 
             {/* PASSWORD */}
-            <div>
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+            />
 
-              <label className="block mb-2 text-sm font-semibold text-gray-700">
-                Password
-              </label>
+            {/* LOGIN OPTIONS */}
+            {isLogin && (
+              <div className="flex items-center justify-between text-sm text-gray-400">
 
-              <div className="relative">
-
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter password"
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 pr-12 outline-none focus:ring-2 focus:ring-[#67f0b5]"
-                />
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" />
+                  Remember me
+                </label>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="hover:text-orange-400 transition"
                 >
-                  {showPassword
-                    ? <FaEyeSlash />
-                    : <FaEye />}
+                  Forgot Password?
                 </button>
-
-              </div>
-
-            </div>
-
-            {/* CONFIRM PASSWORD */}
-            {!isLogin && (
-              <div>
-
-                <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  Confirm Password
-                </label>
-
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm password"
-                  className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-[#67f0b5]"
-                />
 
               </div>
             )}
 
-            {/* BUTTON */}
+            {/* SUBMIT BUTTON */}
             <button
               type="submit"
-              className="w-full bg-[#0f8b5f] hover:opacity-90 text-white py-4 rounded-2xl font-semibold transition-all shadow-lg"
+              className="w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 transition-all duration-300 font-bold text-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40"
             >
               {isLogin
-                ? "Login"
-                : "Create Account"}
+                ? `Sign In as ${
+                    role === "customer"
+                      ? "Customer"
+                      : "Restaurant Owner"
+                  }`
+                : `Create ${
+                    role === "customer"
+                      ? "Customer"
+                      : "Restaurant"
+                  } Account`}
             </button>
 
           </form>
 
+          {/* FOOTER TEXT */}
+          <p className="mt-8 text-center text-gray-400">
+
+            {isLogin
+              ? "Don’t have an account?"
+              : "Already have an account?"}
+
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="ml-2 text-orange-400 hover:text-orange-300 transition"
+            >
+              {isLogin ? "Sign Up" : "Sign In"}
+            </button>
+
+          </p>
+
         </div>
-
       </div>
-
     </div>
-
-  </div>
-);
-};
-
-export default AuthPage;
+  );
+}
