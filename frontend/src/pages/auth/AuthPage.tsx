@@ -1,10 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AuthPage() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState("customer");
+  const { login } = useAuth()!;
+  const [name, setName] = useState("");
+const [address, setAddress] = useState("");
+const [phone, setPhone] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6 py-10 text-white overflow-hidden relative">
@@ -174,65 +181,84 @@ export default function AuthPage() {
           {/* FORM */}
           <form  className="space-y-5"
   onSubmit={(e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    navigate("/restaurants");
-  }}
+  login({
+    name,
+    email,
+    phone,
+    address,
+    role,
+  });
+
+  navigate("/restaurants");
+}}
 >
 
             {/* NAME FIELD */}
             {!isLogin && (
               <input
-                type="text"
-                placeholder={
-                  role === "customer"
-                    ? "Full Name"
-                    : "Restaurant Name"
-                }
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
-              />
+  type="text"
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+  placeholder={
+    role === "customer"
+      ? "Full Name"
+      : "Restaurant Name"
+  }
+  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+/>
             )}
 
             {/* RESTAURANT EXTRA FIELDS */}
             {/* ADDRESS */}
 {!isLogin && (
   <input
-    type="text"
-    placeholder={
-      role === "customer"
-        ? "Residential Address"
-        : "Restaurant Address"
-    }
-    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
-  />
+  type="text"
+  value={address}
+  onChange={(e) => setAddress(e.target.value)}
+  placeholder={
+    role === "customer"
+      ? "Residential Address"
+      : "Restaurant Address"
+  }
+  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+/>
 )}
 
 {/* CONTACT NUMBER */}
 {!isLogin && (
   <input
-    type="text"
-    placeholder={
-      role === "customer"
-        ? "Mobile Number"
-        : "Business Contact Number"
-    }
-    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
-  />
+  type="text"
+  value={phone}
+  onChange={(e) => setPhone(e.target.value)}
+  placeholder={
+    role === "customer"
+      ? "Mobile Number"
+      : "Business Contact Number"
+  }
+  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+/>
 )}
 
             {/* EMAIL */}
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email Address"
               className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
             />
+              
 
             {/* PASSWORD */}
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
-            />
+<input
+  type="password"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  placeholder="Password"
+  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-orange-500 transition"
+/>
 
             {/* LOGIN OPTIONS */}
             {isLogin && (

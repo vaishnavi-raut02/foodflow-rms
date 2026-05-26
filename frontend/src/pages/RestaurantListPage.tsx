@@ -4,12 +4,15 @@ import { restaurants } from "../types/restaurant";
 import RestaurantCard from "../components/restaurant/RestaurantCard";
 import RestaurantSearch from "../components/restaurant/RestaurantSearch";
 import RestaurantFilters from "../components/restaurant/RestaurantFilters";
+import { useCart } from "../context/CartContext";
+import CartDrawer from "../components/restaurant/CartDrawer";
 export default function RestaurantListPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] =
   useState("All");
-  
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { totalItems } = useCart();
 
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
@@ -47,12 +50,16 @@ export default function RestaurantListPage() {
               📍 Pune
             </button>
 
-            <button className="relative px-5 py-2 rounded-2xl bg-orange-500 hover:bg-orange-600 transition font-semibold shadow-lg shadow-orange-500/20">
-              🛒 Cart
-              <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                2
-              </span>
-            </button>
+           <button
+  onClick={() => setIsCartOpen(true)}
+  className="relative px-5 py-2 rounded-2xl bg-orange-500 hover:bg-orange-600 transition font-semibold shadow-lg shadow-orange-500/20"
+>
+  🛒 Cart
+
+  <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold min-w-[24px] h-6 px-2 rounded-full flex items-center justify-center">
+    {totalItems}
+  </span>
+</button>
 
           </div>
         </div>
@@ -273,29 +280,10 @@ export default function RestaurantListPage() {
       </section>
 
       {/* FLOATING CART */}
-      <div className="fixed bottom-6 right-6 z-50">
-
-        <button className="bg-orange-500 hover:bg-orange-600 transition shadow-2xl shadow-orange-500/30 rounded-3xl px-6 py-4 flex items-center gap-4">
-
-          <div className="text-left">
-            <p className="text-sm text-white/80">
-              2 Items
-            </p>
-
-            <h4 className="font-bold text-lg">
-              ₹450
-            </h4>
-          </div>
-
-          <div className="w-px h-10 bg-white/20" />
-
-          <div className="font-semibold">
-            View Cart →
-          </div>
-
-        </button>
-
-      </div>
+      <CartDrawer
+  isOpen={isCartOpen}
+  onClose={() => setIsCartOpen(false)}
+/>
 
     </div>
   );
