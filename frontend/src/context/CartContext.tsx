@@ -2,9 +2,11 @@ import {
   createContext,
   useContext,
   useState,
-  
 } from "react";
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+
+/* ---------------- TYPES ---------------- */
 
 type CartItem = {
   id: number;
@@ -18,114 +20,104 @@ type CartContextType = {
   cartItems: CartItem[];
 
   addToCart: (item: Omit<CartItem, "quantity">) => void;
-
   increaseQuantity: (id: number) => void;
-
   decreaseQuantity: (id: number) => void;
-
-  removeItem: (id: number) => void;
+  removeFromCart: (id: number) => void;
+  clearCart: () => void;
 
   totalItems: number;
+  subtotal: number;
 
-  totalPrice: number;
+  proceedToCheckout: () => void;
 };
 
-const CartContext =
-  createContext<CartContextType | null>(null);
+/* ---------------- CONTEXT ---------------- */
 
-export function CartProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+const CartContext = createContext<CartContextType | null>(null);
 
+/* ---------------- PROVIDER ---------------- */
+
+export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // ADD ITEM
-  const addToCart = (
-    item: Omit<CartItem, "quantity">
-  ) => {
+  const navigate = useNavigate();
 
+  /* ---------------- ADD TO CART ---------------- */
+  const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCartItems((prev) => {
-
-      const existing = prev.find(
-        (cartItem) => cartItem.id === item.id
-      );
+      const existing = prev.find((p) => p.id === item.id);
 
       if (existing) {
-        return prev.map((cartItem) =>
-          cartItem.id === item.id
-            ? {
-                ...cartItem,
-                quantity: cartItem.quantity + 1,
-              }
-            : cartItem
+        return prev.map((p) =>
+          p.id === item.id
+            ? { ...p, quantity: p.quantity + 1 }
+            : p
         );
       }
 
-      return [
-        ...prev,
-        {
-          ...item,
-          quantity: 1,
-        },
-      ];
+      return [...prev, { ...item, quantity: 1 }];
     });
   };
 
-  // INCREASE
+  /* ---------------- INCREASE ---------------- */
   const increaseQuantity = (id: number) => {
-
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
+          ? { ...item, quantity: item.quantity + 1 }
           : item
       )
     );
   };
 
-  // DECREASE
+  /* ---------------- DECREASE ---------------- */
   const decreaseQuantity = (id: number) => {
-
     setCartItems((prev) =>
       prev
         .map((item) =>
           item.id === id
-            ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
+            ? { ...item, quantity: item.quantity - 1 }
             : item
         )
         .filter((item) => item.quantity > 0)
     );
   };
 
-  // REMOVE
-  const removeItem = (id: number) => {
-
+  /* ---------------- REMOVE ---------------- */
+  const removeFromCart = (id: number) => {
     setCartItems((prev) =>
       prev.filter((item) => item.id !== id)
     );
   };
 
-  // TOTAL ITEMS
+  /* ---------------- CLEAR ---------------- */
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  /* ---------------- TOTAL ITEMS ---------------- */
   const totalItems = cartItems.reduce(
     (acc, item) => acc + item.quantity,
     0
   );
 
-  // TOTAL PRICE
-  const totalPrice = cartItems.reduce(
-    (acc, item) =>
-      acc + item.price * item.quantity,
+  /* ---------------- SUBTOTAL ---------------- */
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
     0
   );
 
+  /* ---------------- CHECKOUT NAVIGATION ---------------- */
+  const proceedToCheckout = () => {
+    if (cartItems.length === 0) {
+      alert("Your cart is empty 🚫");
+      return;
+    }
+
+    navigate("/checkout");
+  };
+
+  /* ---------------- PROVIDER ---------------- */
   return (
     <CartContext.Provider
       value={{
@@ -133,9 +125,11 @@ export function CartProvider({
         addToCart,
         increaseQuantity,
         decreaseQuantity,
-        removeItem,
+        removeFromCart,
+        clearCart,
         totalItems,
-        totalPrice,
+        subtotal,
+        proceedToCheckout,
       }}
     >
       {children}
@@ -143,14 +137,13 @@ export function CartProvider({
   );
 }
 
-export function useCart() {
+/* ---------------- HOOK ---------------- */
 
+export function useCart() {
   const context = useContext(CartContext);
 
   if (!context) {
-    throw new Error(
-      "useCart must be used inside CartProvider"
-    );
+    throw new Error("useCart must be used inside CartProvider");
   }
 
   return context;

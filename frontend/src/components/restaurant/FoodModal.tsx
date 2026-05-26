@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../context/CartContext";
 
 type FoodItem = {
   id: number;
@@ -152,14 +152,32 @@ export default function FoodModal({
             </div>
 
             {/* ADD BUTTON */}
-            <button className="w-full mt-6 py-5 rounded-3xl bg-orange-500 hover:bg-orange-600 transition text-xl font-bold shadow-2xl shadow-orange-500/30">
+            {/* ADD BUTTON */}
+<button
+  onClick={() => {
 
-              Add {quantity} Item
-              {quantity > 1 ? "s" : ""}
+    for (let i = 0; i < quantity; i++) {
 
-              {" "}• ₹{food.price * quantity}
+      addToCart({
+        id: food.id,
+        name: food.name,
+        price: food.price,
+        image: food.image,
+      });
 
-            </button>
+    }
+
+    onClose();
+  }}
+  className="w-full mt-6 py-5 rounded-3xl bg-orange-500 hover:bg-orange-600 transition text-xl font-bold shadow-2xl shadow-orange-500/30"
+>
+
+  Add {quantity} Item
+  {quantity > 1 ? "s" : ""}
+
+  {" "}• ₹{food.price * quantity}
+
+</button>
 
           </div>
 

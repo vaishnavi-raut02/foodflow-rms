@@ -6,13 +6,26 @@ import CartDrawer from "../components/restaurant/CartDrawer";
 
 import { restaurants } from "../types/restaurant";
 
-export default function RestaurantDetailPage() {
+import { useCart } from "../context/CartContext";
 
+export default function RestaurantDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [selectedFood, setSelectedFood] = useState<any>(null);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedFood, setSelectedFood] =
+    useState<any>(null);
+
+  const [isCartOpen, setIsCartOpen] =
+    useState(false);
+
+  const {
+    totalItems,
+    subtotal,
+    addToCart,
+    cartItems,
+    increaseQuantity,
+    decreaseQuantity,
+  } = useCart();
 
   const restaurant = restaurants.find(
     (item) => item.id === Number(id)
@@ -96,13 +109,30 @@ export default function RestaurantDetailPage() {
 
           </div>
 
-          {/* BACK BUTTON */}
-          <button
-            onClick={() => navigate("/restaurants")}
-            className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
-          >
-            ← Back
-          </button>
+          {/* RIGHT */}
+          <div className="flex items-center gap-4">
+
+            {/* BACK BUTTON */}
+            <button
+              onClick={() => navigate("/restaurants")}
+              className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
+            >
+              ← Back
+            </button>
+
+            {/* CART BUTTON */}
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative px-5 py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 transition font-semibold shadow-lg shadow-orange-500/20"
+            >
+              🛒 Cart
+
+              <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold min-w-[24px] h-6 px-2 rounded-full flex items-center justify-center">
+                {totalItems}
+              </span>
+            </button>
+
+          </div>
 
         </div>
 
@@ -112,6 +142,7 @@ export default function RestaurantDetailPage() {
       <section className="pt-36 px-6 relative overflow-hidden">
 
         <div className="absolute top-0 left-0 w-72 h-72 bg-orange-500/20 blur-3xl rounded-full" />
+
         <div className="absolute bottom-0 right-0 w-72 h-72 bg-red-500/20 blur-3xl rounded-full" />
 
         <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-center">
@@ -228,108 +259,193 @@ export default function RestaurantDetailPage() {
 
       </section>
 
+     
       {/* FOOD ITEMS */}
-      <section className="px-6 py-16">
+<section className="px-6 py-16">
 
-        <div className="max-w-7xl mx-auto">
+  <div className="max-w-7xl mx-auto">
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
 
-            {foodItems.map((item) => (
+      {foodItems.map((item) => {
+        const cartItem = cartItems.find(
+          (cart) => cart.id === item.id
+        );
 
-              <div
-                key={item.id}
-                className="group bg-slate-900 border border-white/10 rounded-[30px] overflow-hidden hover:-translate-y-2 transition duration-500 hover:shadow-2xl hover:shadow-orange-500/10"
-              >
+        return (
+          <div
+            key={item.id}
+            className="group bg-slate-900 border border-white/10 rounded-[32px] overflow-hidden hover:-translate-y-2 transition duration-500 hover:shadow-2xl hover:shadow-orange-500/10"
+          >
 
-                {/* IMAGE */}
-                <div className="relative overflow-hidden">
+            {/* IMAGE */}
+            <div
+              onClick={() => setSelectedFood(item)}
+              className="relative overflow-hidden cursor-pointer"
+            >
 
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-64 w-full object-cover group-hover:scale-110 transition duration-700"
-                  />
+              <img
+                src={item.image}
+                alt={item.name}
+                className="h-72 w-full object-cover group-hover:scale-110 transition duration-700"
+              />
 
-                  <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-orange-500 text-sm font-bold">
-                    ₹{item.price}
-                  </div>
+              {/* OVERLAY */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
 
-                </div>
+              {/* PRICE */}
+              <div className="absolute top-5 left-5 px-4 py-2 rounded-full bg-orange-500 text-sm font-bold shadow-lg">
+                ₹{item.price}
+              </div>
 
-                {/* CONTENT */}
-                <div className="p-6">
+              {/* ADD BUTTON */}
+              <div className="absolute top-5 right-5">
 
-                  <div className="flex items-center justify-between">
+                {!cartItem ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
 
-                    <h3 className="text-2xl font-bold">
-                      {item.name}
-                    </h3>
+                      addToCart({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        image: item.image,
+                      });
+                    }}
+                    className="px-5 py-2 rounded-2xl bg-white text-black font-bold hover:scale-105 transition"
+                  >
+                    ADD
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-3 bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl px-3 py-2">
 
-                    <div
-                      className={`text-sm px-3 py-1 rounded-full ${
-                        item.type === "Veg"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-red-500/20 text-red-400"
-                      }`}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        decreaseQuantity(item.id);
+                      }}
+                      className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 transition text-lg"
                     >
-                      {item.type}
-                    </div>
+                      -
+                    </button>
+
+                    <span className="font-bold text-white min-w-[20px] text-center">
+                      {cartItem.quantity}
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        increaseQuantity(item.id);
+                      }}
+                      className="w-8 h-8 rounded-xl bg-orange-500 hover:bg-orange-600 transition text-lg"
+                    >
+                      +
+                    </button>
 
                   </div>
+                )}
 
-                  <p className="text-gray-400 mt-4 leading-relaxed">
+              </div>
+
+              {/* TYPE */}
+              <div
+                className={`absolute bottom-5 left-5 px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-xl ${
+                  item.type === "Veg"
+                    ? "bg-green-500/20 text-green-400 border border-green-500/20"
+                    : "bg-red-500/20 text-red-400 border border-red-500/20"
+                }`}
+              >
+                {item.type}
+              </div>
+
+            </div>
+
+            {/* CONTENT */}
+            <div className="p-6">
+
+              <div className="flex items-start justify-between gap-4">
+
+                <div>
+
+                  <h3 className="text-2xl font-bold">
+                    {item.name}
+                  </h3>
+
+                  <p className="text-gray-400 mt-3 leading-relaxed">
                     {item.description}
                   </p>
-
-                  <button
-                    onClick={() => setSelectedFood(item)}
-                    className="w-full mt-8 py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 transition font-semibold shadow-lg shadow-orange-500/20"
-                  >
-                    View Details
-                  </button>
 
                 </div>
 
               </div>
 
-            ))}
+              {/* FOOTER */}
+              <div className="flex items-center justify-between mt-8">
+
+                <div>
+                  <p className="text-sm text-gray-500">
+                    Delivery
+                  </p>
+
+                  <h4 className="font-bold text-lg">
+                    25 mins
+                  </h4>
+                </div>
+
+                <button
+                  onClick={() => setSelectedFood(item)}
+                  className="px-5 py-3 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition font-semibold"
+                >
+                  View Details
+                </button>
+
+              </div>
+
+            </div>
 
           </div>
+        );
+      })}
 
-        </div>
+    </div>
 
-      </section>
+  </div>
+
+</section>
 
       {/* FLOATING CART */}
-      <div className="fixed bottom-6 right-6 z-50">
+      {totalItems > 0 && (
+        <div className="fixed bottom-6 right-6 z-50">
 
-        <button
-          onClick={() => setIsCartOpen(true)}
-          className="bg-orange-500 hover:bg-orange-600 transition shadow-2xl shadow-orange-500/30 rounded-3xl px-6 py-4 flex items-center gap-4"
-        >
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="bg-orange-500 hover:bg-orange-600 transition shadow-2xl shadow-orange-500/30 rounded-3xl px-6 py-4 flex items-center gap-4"
+          >
 
-          <div className="text-left">
+            <div className="text-left">
 
-            <p className="text-sm text-white/80">
-              2 Items
-            </p>
+              <p className="text-sm text-white/80">
+                {totalItems} Items
+              </p>
 
-            <h4 className="font-bold text-lg">
-              ₹450
-            </h4>
+              <h4 className="font-bold text-lg">
+                ₹{subtotal}
+              </h4>
 
-          </div>
+            </div>
 
-          <div className="w-px h-10 bg-white/20" />
+            <div className="w-px h-10 bg-white/20" />
 
-          <div className="font-semibold">
-            View Cart →
-          </div>
+            <div className="font-semibold">
+              View Cart →
+            </div>
 
-        </button>
+          </button>
 
-      </div>
+        </div>
+      )}
 
       {/* FOOD MODAL */}
       {selectedFood && (
